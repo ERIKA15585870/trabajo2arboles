@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Trivia de Árboles</title>
+    <style>
+        body {
+            background-color: orange;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            color: white;
+            overflow-x: hidden;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/f2/Zantedeschia_aethiopica02.jpg'); /* Imagen de alcatraces */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .container {
+            background: rgba(255, 165, 0, 0.8);
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px green;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px green;
+        }
+        .question {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .tree-image {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 100%;
+            border: 5px solid green;
+            border-radius: 15px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .option-btn {
+            background-color: yellow;
+            color: black;
+            border: 2px solid green;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .option-btn:hover {
+            background-color: #ffeb3b;
+            transform: scale(1.1);
+        }
+        .score {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .winner {
+            text-align: center;
+            font-size: 2em;
+            margin-top: 20px;
+            color: green;
+            text-shadow: 2px 2px white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌳 Trivia de Árboles 🌳</h1>
+    <div class="question" id="question">¿Cómo se llama el árbol de la imagen?</div>
+    <img src="" alt="Árbol" id="treeImage" class="tree-image">
+    <div class="options" id="options"></div>
+    <div class="score" id="score">Puntos: 0</div>
+    <div class="winner" id="winner"></div>
+</div>
+
+<audio id="rainSound" autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+  Tu navegador no soporta audio HTML5.
+</audio>
+
+<script>
+    const questions = [
+        {
+            image: "https://upload.wikimedia.org/wikipedia/commons/4/45/Quercus_robur.jpg", // Roble
+            correct: "Roble",
+            options: ["Encino", "Roble", "Olmo", "Pino"]
+        },
+        {
+            image: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Pinus_sylvestris.jpg", // Pino
+            correct: "Pino",
+            options: ["Cedro", "Pino", "Abeto", "Acacia"]
+        },
+        {
+            image: "https://upload.wikimedia.org/wikipedia/commons/2/26/Acer_saccharum.jpg", // Arce
+            correct: "Arce",
+            options: ["Arce", "Sauce", "Magnolia", "Ciprés"]
+        },
+        {
+            image: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cedrus_libani.jpg", // Cedro
+            correct: "Cedro",
+            options: ["Cedro", "Pino", "Castaño", "Nogal"]
+        },
+        {
+            image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Salix_babylonica1.jpg", // Sauce llorón
+            correct: "Sauce llorón",
+            options: ["Olivo", "Alamo", "Sauce llorón", "Secuoya"]
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const treeImage = document.getElementById('treeImage');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+    const winnerEl = document.getElementById('winner');
+
+    function shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        treeImage.src = q.image;
+        optionsEl.innerHTML = "";
+        const shuffledOptions = shuffleArray([...q.options]);
+        shuffledOptions.forEach(option => {
+            const btn = document.createElement('button');
+            btn.textContent = option;
+            btn.className = 'option-btn';
+            btn.onclick = () => checkAnswer(option);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        const q = questions[currentQuestion];
+        if (selected === q.correct) {
+            score += 2;
+            scoreEl.textContent = `Puntos: ${score}`;
+        }
+
+        currentQuestion++;
+        if (score >= 10) {
+            winnerEl.textContent = "🎉 ¡Felicidades, eres un experto en árboles! 🎉";
+            optionsEl.innerHTML = "";
+            treeImage.style.display = "none";
+        } else if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            winnerEl.textContent = "🎉 ¡Trivia finalizada! 🎉";
+            optionsEl.innerHTML = "";
+            treeImage.style.display = "none";
+        }
+    }
+
+    // Iniciar sonido de lluvia
+    const rainSound = document.getElementById('rainSound');
+    rainSound.volume = 0.2; // volumen bajito para no molestar
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
